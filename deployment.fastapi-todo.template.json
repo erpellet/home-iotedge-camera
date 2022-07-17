@@ -1,0 +1,161 @@
+{
+  "$schema-template": "4.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "cloudregistry": {
+                "username": "$CONTAINER_REGISTRY_USERNAME",
+                "password": "$CONTAINER_REGISTRY_PASSWORD",
+                "address": "$CONTAINER_REGISTRY_NAME"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.2.4",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.2.4",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "fastapi-todo": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.fastapi-todo}",
+              "createOptions": {
+                "ExposedPorts": {
+                  "8001/tcp": {}
+                },
+                "HostConfig": {
+                  "PortBindings": {
+                    "8001/tcp": [
+                      {
+                        "HostIP": "0.0.0.0",
+                        "HostPort": "8001"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "camera": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.test1}",
+              "createOptions": {}
+            },
+            "env": {
+              "LOCAL_STORAGE_ACCOUNT_NAME": {
+                "value": "$LOCAL_STORAGE_ACCOUNT_NAME"
+              },
+              "LOCAL_STORAGE_ACCOUNT_KEY": {
+                "value": "$LOCAL_STORAGE_ACCOUNT_KEY"
+              }
+            }
+          },
+          "azureblobstorageoniotedge": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azure-blob-storage:latest",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "11002/tcp": [
+                      {
+                        "HostPort": "11002"
+                      }
+                    ]
+                  }
+                }
+              }
+            },
+            "env": {
+              "LOCAL_STORAGE_ACCOUNT_NAME": {
+                "value": "$LOCAL_STORAGE_ACCOUNT_NAME"
+              },
+              "LOCAL_STORAGE_ACCOUNT_KEY": {
+                "value": "$LOCAL_STORAGE_ACCOUNT_KEY"
+              }
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.1",
+        "routes": {
+          "route": "FROM /* INTO $upstream"
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    },
+    "azureblobstorageoniotedge": {
+      "properties.desired": {
+        "deviceToCloudUploadProperties": {
+          "uploadOn": true,
+          "uploadOrder": "OldestFirst",
+          "cloudStorageConnectionString": "$CLOUD_STORAGE_CONNECTION_STRING",
+          "storageContainersForUpload": {
+            "pictures": "%h-%d-%m-%c"
+          },
+          "deleteAfterUpload": true
+        },
+        "deviceAutoDeleteProperties": {
+          "deleteOn": true
+        }
+      }
+    }
+  }
+}

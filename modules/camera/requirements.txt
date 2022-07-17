@@ -1,0 +1,9 @@
+azure-iot-device~=2.11
+azure-storage-blob
+six
+requests
+websocket-client
+
+# the following package is a depenency but a modified local copy of the package is used
+# due to a bug in the websocket section 
+# iotccsdk

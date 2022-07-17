@@ -1,0 +1,49 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "make all",
+            "type": "shell",
+            "command": "set -a && source .env && make all",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                }
+
+            }
+        },
+        {
+            "label": "make camera module",
+            "type": "shell",
+            "command": "set -a && source .env && make camera",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                }
+
+            }
+        },
+        {
+            "label": "make fastapi-todo module",
+            "type": "shell",
+            "command": "set -a && source .env && make fastapi-todo",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                }
+            }
+        },
+        {
+            "label": "make devkit base image",
+            "type": "shell",
+            "command": "set -a && source .env && make baseimage",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                }
+            }
+        }
+    ]
+}

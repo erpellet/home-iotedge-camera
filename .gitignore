@@ -1,0 +1,6 @@
+config/
+.env
+local
+tmp/*
+.venv
+*.log

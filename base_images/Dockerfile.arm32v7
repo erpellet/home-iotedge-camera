@@ -1,0 +1,21 @@
+FROM arm32v7/python:3.5.10-slim-stretch
+
+# Install the gstreamer and relevant gstreamer plugin modules
+RUN \
+    apt-get update -y \
+    && apt-get install -y libgstreamer1.0-0 \
+            gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
+            gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly \
+            gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools \
+    # Clean up
+    && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/* /tmp/library-scripts/
+
+WORKDIR /
+
+COPY ./requirements.txt /code/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+
+COPY ./app /app
+
+CMD ["tail", "-f", "/dev/null"]

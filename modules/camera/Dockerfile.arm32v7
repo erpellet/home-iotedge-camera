@@ -1,0 +1,16 @@
+FROM acrdemoiotedge7hizq.azurecr.io/iotedge/devkitbase:v0.0.2-python-3.7.13-slim-buster-arm32v7
+
+WORKDIR /app
+
+# build of the cryptography package (dependency of azure-storage-blob installed later) fails 
+# using a pre-built version of the cryptography library as a workaround 
+# note: the pre-built version used below is only copmpatible with Python 3.7
+RUN pip3 install --no-cache-dir https://www.piwheels.org/simple/cryptography/cryptography-37.0.2-cp37-cp37m-linux_armv7l.whl#sha256=d7c029cb35c284fdc7847ed2e407735b12961b855d9e2c24a724c030c8fa4f10
+
+COPY requirements.txt ./
+
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD [ "python3", "-u", "./main.py" ]
